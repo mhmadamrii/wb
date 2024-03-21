@@ -1,18 +1,31 @@
-import Link from 'next/link';
-import { Button } from '~/components/ui/button';
-import { crimson_text } from '~/lib/font';
-import { cn } from '~/lib/utils';
-import Login from './login';
+import dynamic from 'next/dynamic';
 import Navbar from './navbar';
 
-export default function Home({
+import { getServerSession } from 'next-auth';
+import { crimson_text } from '~/lib/font';
+import { cn } from '~/lib/utils';
+import { authOptions } from '~/lib/auth';
+
+const Login = dynamic(() => import('./login'), {
+  ssr: false,
+  loading: () => <span>Loading...</span>,
+});
+
+const Register = dynamic(() => import('./register'), {
+  ssr: false,
+  loading: () => <span>Loading...</span>,
+});
+
+export default async function Home({
   searchParams,
 }: {
   searchParams: {
     login: boolean;
+    register: boolean;
   };
 }) {
-  console.log('searach  params', searchParams);
+  const session = await getServerSession(authOptions);
+  console.log('session', session);
   return (
     <>
       <div className="flex h-screen flex-col">
@@ -42,6 +55,7 @@ export default function Home({
       </div>
 
       {searchParams?.login && <Login />}
+      {searchParams?.register && <Register />}
     </>
   );
 }

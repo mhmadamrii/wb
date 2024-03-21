@@ -3,6 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { signIn } from 'next-auth/react';
 
 import { Input } from '~/components/ui/input';
 import { Button } from '~/components/ui/button';
@@ -26,6 +27,7 @@ import {
   FormLabel,
   FormMessage,
 } from '~/components/ui/form';
+import { useRouter } from 'next/navigation';
 
 const FormSchema = z.object({
   username: z.string().min(2, {
@@ -34,6 +36,7 @@ const FormSchema = z.object({
 });
 
 export default function Login() {
+  const router = useRouter();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -46,7 +49,10 @@ export default function Login() {
   }
 
   return (
-    <Dialog defaultOpen>
+    <Dialog
+      defaultOpen
+      onOpenChange={() => router.push('/')}
+    >
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Login</DialogTitle>
@@ -87,7 +93,13 @@ export default function Login() {
                 </FormItem>
               )}
             />
-            <Button type="submit">Submit</Button>
+            <Button
+              onClick={() => signIn()}
+              className="w-full"
+              type="submit"
+            >
+              Submit
+            </Button>
           </form>
         </Form>
       </DialogContent>
