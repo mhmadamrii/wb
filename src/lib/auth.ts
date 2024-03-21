@@ -85,3 +85,5 @@ export const authOptions: NextAuthOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET,
 };
+
+// article for custom login: https://github.dev/ethanmick/nextauth-custom-login
