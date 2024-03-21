@@ -27,25 +27,45 @@ import {
   FormLabel,
   FormMessage,
 } from '~/components/ui/form';
-import { useRouter } from 'next/navigation';
+import {
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
 
 const FormSchema = z.object({
-  username: z.string().min(2, {
-    message: 'Username must be at least 2 characters.',
-  }),
+  email: z.string().email(),
+  password: z.string().min(3),
 });
 
 export default function Login() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl =
+    searchParams.get('callbackUrl') || '/cart';
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      username: '',
+      email: '',
+      password: '',
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log('datas', data);
+  async function onSubmit(
+    data: z.infer<typeof FormSchema>,
+  ) {
+    try {
+      const res = await signIn('credentials', {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+        callbackUrl,
+      });
+
+      if (!res?.error) router.push(callbackUrl);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
@@ -64,7 +84,7 @@ export default function Login() {
           >
             <FormField
               control={form.control}
-              name="username"
+              name="email"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
@@ -80,7 +100,7 @@ export default function Login() {
 
             <FormField
               control={form.control}
-              name="username"
+              name="password"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
@@ -93,11 +113,7 @@ export default function Login() {
                 </FormItem>
               )}
             />
-            <Button
-              onClick={() => signIn()}
-              className="w-full"
-              type="submit"
-            >
+            <Button className="w-full" type="submit">
               Submit
             </Button>
           </form>

@@ -3,6 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { useRouter } from 'next/navigation';
 
 import { Input } from '~/components/ui/input';
 import { Button } from '~/components/ui/button';
@@ -10,26 +11,20 @@ import { Button } from '~/components/ui/button';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '~/components/ui/dialog';
 
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from '~/components/ui/form';
-import { useRouter } from 'next/navigation';
 
 const FormSchema = z.object({
-  username: z.string().min(2, {
+  name: z.string().min(2, {
     message: 'Username must be at least 2 characters.',
   }),
   email: z.string().email(),
@@ -43,14 +38,33 @@ export default function Register() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      username: '',
+      name: '',
       email: '',
       password: '',
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log('datas', data);
+  async function onSubmit(
+    data: z.infer<typeof FormSchema>,
+  ) {
+    try {
+      const res = await fetch('/api/register', {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!res.ok) {
+        alert(await res.json());
+        return;
+      }
+
+      router.push('?login=true');
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
@@ -98,7 +112,7 @@ export default function Register() {
 
             <FormField
               control={form.control}
-              name="username"
+              name="name"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
