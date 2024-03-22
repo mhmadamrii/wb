@@ -27,6 +27,7 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
+        console.log('credentials', credentials);
         if (
           !credentials ||
           !credentials.email ||
@@ -52,11 +53,10 @@ export const authOptions: NextAuthOptions = {
         }
 
         return {
-          id: user?.id,
-          email: user?.email,
-          name: user?.name,
-          randomKey: 'Hey cool',
-        } as User | any;
+          id: user.id,
+          email: user.email,
+          name: user.name,
+        } as User;
       },
     }),
   ],
@@ -82,6 +82,9 @@ export const authOptions: NextAuthOptions = {
       }
       return token;
     },
+  },
+  pages: {
+    signIn: '/?login=true',
   },
   secret: process.env.NEXTAUTH_SECRET,
 };
