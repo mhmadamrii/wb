@@ -36,3 +36,6 @@ enum Mechanic {
 }
 
 const nameMechanic = Mechanic.name;
+
+// https://github.dev/vahid-nejad/custom-login-page-intercepting-routes
+// https://www.youtube.com/watch?v=g6S-XZxq9Ug
