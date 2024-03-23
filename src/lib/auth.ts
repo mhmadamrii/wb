@@ -1,23 +1,22 @@
-import type { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
+
+import type { NextAuthOptions } from 'next-auth';
 import { prisma } from './prisma';
 import { compare } from 'bcryptjs';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 
-interface User {
-  id: number;
-  email: string;
-  name: string;
-}
-
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma as any),
+  adapter: PrismaAdapter(prisma),
+  secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: 'jwt',
   },
+  pages: {
+    signIn: '/?login=true',
+  },
   providers: [
     CredentialsProvider({
-      name: 'Sign in',
+      name: 'Credentials',
       credentials: {
         email: {
           label: 'Email (provide your email)',
@@ -27,66 +26,55 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        console.log('credentials', credentials);
-        if (
-          !credentials ||
-          !credentials.email ||
-          !credentials.password
-        ) {
+        if (!credentials.email || !credentials.password) {
           return null;
         }
 
-        const user = await prisma.user.findUnique({
+        const existingUser = await prisma.user.findUnique({
           where: {
             email: credentials.email,
           },
         });
 
-        if (
-          !user ||
-          (await compare(
-            credentials.password,
-            user.password,
-          ))
-        ) {
-          return null;
-        }
+        const isMatchPassword = await compare(
+          credentials.password,
+          existingUser.password,
+        );
+
+        if (!isMatchPassword) return null;
 
         return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-        } as User;
+          id: `${existingUser.id}`,
+          name: existingUser.name,
+          email: existingUser.email,
+        };
       },
     }),
   ],
   callbacks: {
-    session: ({ session, token }) => {
+    session: async ({ session, token }) => {
+      console.log('[SESSION_USER]', session);
       return {
         ...session,
         user: {
           ...session.user,
-          id: token.id,
-          randomKey: token.randomKey,
+          name: token.name,
         },
       };
     },
-    jwt: ({ token, user }) => {
+    jwt: async ({ token, user }) => {
+      console.log('[TOKEN_USER]', token);
       if (user) {
         const u = user as unknown as any;
         return {
           ...token,
+          username: user.name,
           id: u.id,
-          randomKey: u.randomKey,
         };
       }
       return token;
     },
   },
-  pages: {
-    signIn: '/?login=true',
-  },
-  secret: process.env.NEXTAUTH_SECRET,
 };
 
-// article for custom login: https://github.dev/ethanmick/nextauth-custom-login
+// in case you're stuck, watch this: https://www.youtube.com/watch?v=bicCg4GxOP8

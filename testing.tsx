@@ -39,3 +39,9 @@ const nameMechanic = Mechanic.name;
 
 // https://github.dev/vahid-nejad/custom-login-page-intercepting-routes
 // https://www.youtube.com/watch?v=g6S-XZxq9Ug
+
+export { default } from 'next-auth/middleware';
+
+export const config = {
+  matcher: ['/add-book', '/complains', '/edit-room'],
+};

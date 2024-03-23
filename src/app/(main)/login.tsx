@@ -41,7 +41,7 @@ export default function Login() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl =
-    searchParams.get('callbackUrl') || '/cart';
+    searchParams.get('callbackUrl') || '/';
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -56,10 +56,9 @@ export default function Login() {
   ) {
     try {
       const res = await signIn('credentials', {
+        redirect: false,
         email: data.email,
         password: data.password,
-        redirect: false,
-        callbackUrl,
       });
 
       if (!res?.error) router.push(callbackUrl);

@@ -25,11 +25,15 @@ export default async function Home({
   };
 }) {
   const session = await getServerSession(authOptions);
-  console.log('session', session);
+  console.log('nice session', session);
   return (
     <>
       <div className="flex h-screen flex-col">
-        <Navbar />
+        {!session ? (
+          <Navbar />
+        ) : (
+          <span>Welcome home {session.user.name}</span>
+        )}
         <main className="flex flex-1 flex-col">
           <div
             className={cn(
