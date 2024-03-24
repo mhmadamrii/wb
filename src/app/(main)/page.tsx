@@ -5,6 +5,8 @@ import { getServerSession } from 'next-auth';
 import { crimson_text } from '~/lib/font';
 import { cn } from '~/lib/utils';
 import { authOptions } from '~/lib/auth';
+import { getBooks } from '~/actions/book.action';
+import Link from 'next/link';
 
 const Login = dynamic(() => import('./login'), {
   ssr: false,
@@ -25,7 +27,8 @@ export default async function Home({
   };
 }) {
   const session = await getServerSession(authOptions);
-  console.log('nice session', session);
+  const books = await getBooks({});
+  console.log('all books', books);
   return (
     <>
       <div className="flex h-screen flex-col">
@@ -56,6 +59,17 @@ export default async function Home({
             </span>
           </div>
         </main>
+      </div>
+
+      <div>
+        {books.map((item, id) => (
+          <div key={item.id}>
+            <h1 className="text-2xl font-bold">
+              {item.title}
+            </h1>
+            <Link href={`/books/${item.id}`}>Detail</Link>
+          </div>
+        ))}
       </div>
 
       {searchParams?.login && <Login />}

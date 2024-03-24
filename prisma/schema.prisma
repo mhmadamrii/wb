@@ -15,11 +15,25 @@ datasource db {
 }
 
 model User {
-  id          Int             @id     @default(autoincrement())
+  id          String          @id 
   name        String
   email       String          @unique
   password    String
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
+
+  books       Book[]
 }
 
+model Book {
+  id          Int             @id     @default(autoincrement())
+  title       String
+  description String
+  price       Int
+  author      String
+  imageUrl    String?
+  userId      String
+  createdAt   DateTime        @default(now())
+
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

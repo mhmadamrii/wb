@@ -2,6 +2,7 @@ import * as z from 'zod';
 import { hash } from 'bcryptjs';
 import { NextResponse } from 'next/server';
 import { prisma } from '~/lib/prisma';
+import { generateID } from '~/lib/utils';
 
 const userSchema = z.object({
   name: z.string().min(2, {
@@ -45,6 +46,7 @@ export async function POST(req: Request) {
 
     const user = await prisma.user.create({
       data: {
+        id: generateID('uuid').toString(),
         name,
         email: email.toLowerCase(),
         password: hashed_password,
