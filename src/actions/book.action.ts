@@ -2,6 +2,7 @@
 
 import { prisma } from '~/lib/prisma';
 import { revalidatePath } from 'next/cache';
+import { generateID } from '~/lib/utils';
 
 export async function createBook({
   title,
@@ -21,6 +22,7 @@ export async function createBook({
   try {
     return await prisma.book.create({
       data: {
+        id: generateID('uuid').toString(),
         title,
         description,
         price,
@@ -44,7 +46,7 @@ export async function getBooks({}) {
   }
 }
 
-export async function getBookById({ id }: { id: number }) {
+export async function getBookById({ id }: { id: string }) {
   try {
     return await prisma.book.findUnique({
       where: {

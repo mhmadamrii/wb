@@ -9,28 +9,24 @@ import { Input } from '~/components/ui/input';
 import { Button } from '~/components/ui/button';
 
 import {
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
+
+import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '~/components/ui/dialog';
 
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from '~/components/ui/form';
-import {
-  useRouter,
-  useSearchParams,
-} from 'next/navigation';
 
 const FormSchema = z.object({
   email: z.string().email(),

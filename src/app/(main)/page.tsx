@@ -1,4 +1,5 @@
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import Navbar from './navbar';
 
 import { getServerSession } from 'next-auth';
@@ -6,7 +7,6 @@ import { crimson_text } from '~/lib/font';
 import { cn } from '~/lib/utils';
 import { authOptions } from '~/lib/auth';
 import { getBooks } from '~/actions/book.action';
-import Link from 'next/link';
 
 const Login = dynamic(() => import('./login'), {
   ssr: false,

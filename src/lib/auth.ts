@@ -42,6 +42,7 @@ export const authOptions: NextAuthOptions = {
         );
 
         if (!isMatchPassword) return null;
+        console.log('existing', existingUser);
 
         return {
           id: `${existingUser.id}`,
@@ -52,18 +53,20 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    session: async ({ session, token }) => {
+    session: async ({ session, token, user }) => {
       console.log('[SESSION_USER]', session);
       return {
         ...session,
         user: {
           ...session.user,
           name: token.name,
+          id: token.id,
         },
       };
     },
     jwt: async ({ token, user }) => {
-      console.log('[TOKEN_USER]', token);
+      // console.log('[TOKEN_USER]', token);
+      // console.log('[USER]', user);
       if (user) {
         const u = user as unknown as any;
         return {
