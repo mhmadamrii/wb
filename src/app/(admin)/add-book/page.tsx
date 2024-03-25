@@ -74,6 +74,8 @@ export default function AddBook() {
 
   return (
     <>
+      {/* 
+// @ts-ignore */}
       {user.isSeller ? (
         <div className="flex flex-col justify-center gap-10">
           <div>
