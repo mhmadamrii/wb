@@ -3,7 +3,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { signIn } from 'next-auth/react';
+import {
+  signIn,
+  useSession,
+  getSession,
+} from 'next-auth/react';
 
 import { Input } from '~/components/ui/input';
 import { Button } from '~/components/ui/button';
@@ -27,6 +31,8 @@ import {
   FormItem,
   FormMessage,
 } from '~/components/ui/form';
+import { useUserData } from '~/lib/store';
+import { handleGetUserById } from '~/lib/auth';
 
 const FormSchema = z.object({
   email: z.string().email(),
@@ -35,6 +41,8 @@ const FormSchema = z.object({
 
 export default function Login() {
   const router = useRouter();
+  // const { data } = useSession();
+  const { setUserLogin } = useUserData();
   const searchParams = useSearchParams();
   const callbackUrl =
     searchParams.get('callbackUrl') || '/';
@@ -57,7 +65,21 @@ export default function Login() {
         password: data.password,
       });
 
-      if (!res?.error) router.push(callbackUrl);
+      if (!res?.error) {
+        getSession()
+          .then((res) => {
+            handleGetUserById(res.user.id).then((res) => {
+              setUserLogin({
+                email: res.email,
+                name: res.name,
+                isSeller: res.isSeller,
+                id: res.id,
+              });
+            });
+          })
+          .then(() => router.push(callbackUrl));
+        // router.push(callbackUrl);
+      }
     } catch (error) {
       console.log(error);
     }

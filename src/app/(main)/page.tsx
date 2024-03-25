@@ -35,7 +35,10 @@ export default async function Home({
         {!session ? (
           <Navbar />
         ) : (
-          <span>Welcome home {session.user.name}</span>
+          <div>
+            <Link href="/add-book">Join seler now</Link>
+            <span>Welcome home {session.user.name}</span>
+          </div>
         )}
         <main className="flex flex-1 flex-col">
           <div

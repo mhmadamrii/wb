@@ -4,6 +4,7 @@ import type { NextAuthOptions } from 'next-auth';
 import { prisma } from './prisma';
 import { compare } from 'bcryptjs';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
+import { getUserById } from '~/actions/user.action';
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -78,6 +79,18 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
   },
+};
+
+export const handleGetUserById = async (userId: string) => {
+  try {
+    const res = await getUserById({
+      userId,
+    });
+
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 // in case you're stuck, watch this: https://www.youtube.com/watch?v=bicCg4GxOP8
