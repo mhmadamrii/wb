@@ -22,6 +22,9 @@ import {
   FormItem,
   FormMessage,
 } from '~/components/ui/form';
+import { useGlobalPending } from '~/lib/store';
+import { cn } from '~/lib/utils';
+import Spinner from '~/components/spinner';
 
 const FormSchema = z.object({
   name: z.string().min(2, {
@@ -34,6 +37,8 @@ const FormSchema = z.object({
 });
 
 export default function Register() {
+  const { isLoadingForm, setGlobalPendingForm } =
+    useGlobalPending();
   const router = useRouter();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -48,6 +53,7 @@ export default function Register() {
     data: z.infer<typeof FormSchema>,
   ) {
     try {
+      setGlobalPendingForm(true);
       const res = await fetch('/api/register', {
         method: 'POST',
         body: JSON.stringify(data),
@@ -64,6 +70,8 @@ export default function Register() {
       router.push('?login=true');
     } catch (error) {
       console.log(error);
+    } finally {
+      setGlobalPendingForm(false);
     }
   }
 
@@ -87,7 +95,13 @@ export default function Register() {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input placeholder="Email" {...field} />
+                    <Input
+                      className={cn('to-inherit', {
+                        'bg-slate-100': isLoadingForm,
+                      })}
+                      placeholder="Email"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -101,6 +115,9 @@ export default function Register() {
                 <FormItem>
                   <FormControl>
                     <Input
+                      className={cn('to-inherit', {
+                        'bg-slate-100': isLoadingForm,
+                      })}
                       placeholder="Password"
                       {...field}
                     />
@@ -117,6 +134,9 @@ export default function Register() {
                 <FormItem>
                   <FormControl>
                     <Input
+                      className={cn('to-inherit', {
+                        'bg-slate-100': isLoadingForm,
+                      })}
                       placeholder="Username"
                       {...field}
                     />
@@ -125,8 +145,14 @@ export default function Register() {
                 </FormItem>
               )}
             />
-            <Button className="w-full" type="submit">
-              Submit
+            <Button
+              className={cn('w-full', {
+                'border bg-slate-100 hover:bg-slate-100':
+                  isLoadingForm,
+              })}
+              type="submit"
+            >
+              {isLoadingForm ? <Spinner /> : 'Register'}
             </Button>
           </form>
         </Form>

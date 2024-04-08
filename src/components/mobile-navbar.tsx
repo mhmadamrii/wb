@@ -1,87 +1,49 @@
-import dynamic from 'next/dynamic';
-import Link from 'next/link';
-import MobileNavbar from '~/components/mobile-navbar';
+'use client';
 
-import { Navbar, NavbarLoggedIn } from './navbar';
-import { getServerSession } from 'next-auth';
-import { crimson_text } from '~/lib/font';
-import { cn } from '~/lib/utils';
-import { authOptions } from '~/lib/auth';
-import { getBooks } from '~/actions/book.action';
+import { useState } from 'react';
+import { Turn as Hamburger } from 'hamburger-react';
+import { Button } from './ui/button';
 
-const Login = dynamic(() => import('./login'), {
-  ssr: false,
-  loading: () => <span>Loading...</span>,
-});
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from '~/components/ui/drawer';
 
-const Register = dynamic(() => import('./register'), {
-  ssr: false,
-  loading: () => <span>Loading...</span>,
-});
-
-export default async function Home({
-  searchParams,
-}: {
-  searchParams: {
-    login: boolean;
-    register: boolean;
-  };
-}) {
-  const session = await getServerSession(authOptions);
-  const books = await getBooks({});
-  console.log('all books', books);
+export default function MobileNavbar() {
+  const [isOpen, setOpen] = useState<boolean>(false);
   return (
-    <>
-      <div className="block sm:hidden">
-        <MobileNavbar />
-      </div>
-
-      <div className="flex h-screen flex-col">
-        <div className="hidden sm:block">
-          {!session ? (
-            <Navbar />
-          ) : (
-            <NavbarLoggedIn session={session} />
-          )}
-        </div>
-        <main className="flex flex-1 flex-col">
-          <div
-            className={cn(
-              'flex flex-1 flex-col items-center justify-start pt-11 text-center align-middle text-[43px]',
-              crimson_text.className,
-            )}
-          >
-            <h1>With us, you can shop online & help</h1>
-            <h1>save your high street at the same time</h1>
-          </div>
-
-          <div className="flex-1 bg-slate-100">
-            <span>
-              Lorem ipsum dolor sit amet consectetur
-              adipisicing elit. Perspiciatis sunt cumque qui
-              vero excepturi tempora praesentium consequatur
-              velit deleniti maiores fuga, magni quas ab
-              laudantium atque recusandae eveniet, veniam
-              quo?
-            </span>
-          </div>
-        </main>
-      </div>
-
-      <div>
-        {books.map((item, id) => (
-          <div key={item.id}>
-            <h1 className="text-2xl font-bold">
-              {item.title}
-            </h1>
-            <Link href={`/books/${item.id}`}>Detail</Link>
-          </div>
-        ))}
-      </div>
-
-      {searchParams?.login && <Login />}
-      {searchParams?.register && <Register />}
-    </>
+    <Drawer open={isOpen} onDrag={() => setOpen(false)}>
+      <DrawerTrigger className="flex  w-full items-center justify-between px-2 py-2">
+        <Icon />
+        <Hamburger
+          toggled={isOpen}
+          toggle={setOpen}
+          direction="right"
+        />
+      </DrawerTrigger>
+      <DrawerContent>
+        <DrawerHeader>
+          <DrawerTitle>
+            Are you absolutely sure?
+          </DrawerTitle>
+          <DrawerDescription>
+            This action cannot be undone.
+          </DrawerDescription>
+        </DrawerHeader>
+        <DrawerFooter>
+          <Button>Submit</Button>
+          <DrawerClose>
+            <Button variant="outline">Cancel</Button>
+          </DrawerClose>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
   );
 }
 

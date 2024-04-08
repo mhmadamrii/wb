@@ -2,15 +2,16 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { useGlobalPending, useUserData } from '~/lib/store';
+import { handleGetUserById } from '~/lib/auth';
 import { z } from 'zod';
+import { Input } from '~/components/ui/input';
+import { Button } from '~/components/ui/button';
 import {
   signIn,
   useSession,
   getSession,
 } from 'next-auth/react';
-
-import { Input } from '~/components/ui/input';
-import { Button } from '~/components/ui/button';
 
 import {
   useRouter,
@@ -31,8 +32,8 @@ import {
   FormItem,
   FormMessage,
 } from '~/components/ui/form';
-import { useUserData } from '~/lib/store';
-import { handleGetUserById } from '~/lib/auth';
+import Spinner from '~/components/spinner';
+import { cn } from '~/lib/utils';
 
 const FormSchema = z.object({
   email: z.string().email(),
@@ -43,6 +44,8 @@ export default function Login() {
   const router = useRouter();
   // const { data } = useSession();
   const { setUserLogin } = useUserData();
+  const { isLoadingForm, setGlobalPendingForm } =
+    useGlobalPending();
   const searchParams = useSearchParams();
   const callbackUrl =
     searchParams.get('callbackUrl') || '/';
@@ -59,11 +62,13 @@ export default function Login() {
     data: z.infer<typeof FormSchema>,
   ) {
     try {
+      setGlobalPendingForm(true);
       const res = await signIn('credentials', {
         redirect: false,
         email: data.email,
         password: data.password,
       });
+      console.log('response', res);
 
       if (!res?.error) {
         getSession()
@@ -77,11 +82,14 @@ export default function Login() {
               });
             });
           })
-          .then(() => router.push(callbackUrl));
-        // router.push(callbackUrl);
+          .then(() => {
+            router.push(callbackUrl);
+          });
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setGlobalPendingForm(false);
     }
   }
 
@@ -106,6 +114,10 @@ export default function Login() {
                 <FormItem>
                   <FormControl>
                     <Input
+                      className={cn('to-inherit', {
+                        'bg-slate-100': isLoadingForm,
+                      })}
+                      disabled={isLoadingForm}
                       placeholder="shadcn"
                       {...field}
                     />
@@ -122,6 +134,10 @@ export default function Login() {
                 <FormItem>
                   <FormControl>
                     <Input
+                      className={cn('to-inherit', {
+                        'bg-slate-100': isLoadingForm,
+                      })}
+                      disabled={isLoadingForm}
                       placeholder="shadcn"
                       {...field}
                     />
@@ -130,8 +146,14 @@ export default function Login() {
                 </FormItem>
               )}
             />
-            <Button className="w-full" type="submit">
-              Submit
+            <Button
+              className={cn('w-full', {
+                'border bg-slate-100 hover:bg-slate-100':
+                  isLoadingForm,
+              })}
+              type="submit"
+            >
+              {isLoadingForm ? <Spinner /> : 'Login'}
             </Button>
           </form>
         </Form>

@@ -21,6 +21,11 @@ type UserHook = {
   setUserLogin: UserDataSetter;
 };
 
+type GlobalPending = {
+  isLoadingForm: boolean;
+  setGlobalPendingForm: (val: boolean) => void;
+};
+
 export const useCartStore = create<CartStore>((set) => ({
   cart: 0,
   add: () => set((state) => ({ cart: state.cart + 1 })),
@@ -33,3 +38,11 @@ export const useUserData = create<UserHook>((set) => ({
   setUserLogin: (userData: UserData) =>
     set((state) => ({ user: userData })),
 }));
+
+export const useGlobalPending = create<GlobalPending>(
+  (set) => ({
+    isLoadingForm: false,
+    setGlobalPendingForm: (val: boolean) =>
+      set((state) => ({ isLoadingForm: val })),
+  }),
+);
