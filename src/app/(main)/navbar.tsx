@@ -1,9 +1,10 @@
 'use client';
 
 import Link from 'next/link';
+import UserMenu from './user-menu';
+
 import { useRouter } from 'next/navigation';
 import { Button } from '~/components/ui/button';
-import UserMenu from './user-menu';
 
 const Icon = () => {
   return (

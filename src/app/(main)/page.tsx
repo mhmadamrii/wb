@@ -29,7 +29,6 @@ export default async function Home({
 }) {
   const session = await getServerSession(authOptions);
   const books = await getBooks({});
-  console.log('all books', books);
   return (
     <>
       <div className="block sm:hidden">

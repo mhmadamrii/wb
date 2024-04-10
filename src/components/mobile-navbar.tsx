@@ -1,49 +1,62 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Turn as Hamburger } from 'hamburger-react';
-import { Button } from './ui/button';
 
 import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from '~/components/ui/drawer';
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from './navbar-sheet';
+import Link from 'next/link';
+import { Button } from './ui/button';
 
 export default function MobileNavbar() {
   const [isOpen, setOpen] = useState<boolean>(false);
+  const router = useRouter();
+
+  const pushModal = (q: string): void => {
+    router.push(`?${q}=true`);
+  };
+
   return (
-    <Drawer open={isOpen} onDrag={() => setOpen(false)}>
-      <DrawerTrigger className="flex  w-full items-center justify-between px-2 py-2">
-        <Icon />
-        <Hamburger
-          toggled={isOpen}
-          toggle={setOpen}
-          direction="right"
-        />
-      </DrawerTrigger>
-      <DrawerContent>
-        <DrawerHeader>
-          <DrawerTitle>
-            Are you absolutely sure?
-          </DrawerTitle>
-          <DrawerDescription>
-            This action cannot be undone.
-          </DrawerDescription>
-        </DrawerHeader>
-        <DrawerFooter>
-          <Button>Submit</Button>
-          <DrawerClose>
-            <Button variant="outline">Cancel</Button>
-          </DrawerClose>
-        </DrawerFooter>
-      </DrawerContent>
-    </Drawer>
+    <section className="flex justify-between px-4 py-4">
+      <Icon />
+      <Sheet open={isOpen} onOpenChange={setOpen}>
+        <SheetTrigger>
+          <Hamburger
+            toggled={isOpen}
+            toggle={setOpen}
+            direction="right"
+          />
+        </SheetTrigger>
+        <SheetContent side="left">
+          <SheetHeader>
+            <SheetTitle>
+              Are you absolutely sure?
+            </SheetTitle>
+            <SheetDescription>
+              This action cannot be undone. This will
+              permanently delete your account and remove
+              your data from our servers.
+            </SheetDescription>
+          </SheetHeader>
+
+          <div className="flex flex-col gap-3">
+            <Button onClick={() => pushModal('login')}>
+              Login
+            </Button>
+            <Button onClick={() => pushModal('register')}>
+              Register
+            </Button>
+          </div>
+        </SheetContent>
+      </Sheet>
+    </section>
   );
 }
 
