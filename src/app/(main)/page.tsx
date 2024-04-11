@@ -46,7 +46,7 @@ export default async function Home({
         <main className="flex flex-1 flex-col">
           <div
             className={cn(
-              'flex flex-1 flex-col items-center justify-start pt-11 text-center align-middle text-[43px]',
+              'flex flex-1 flex-col items-center justify-start pb-[200px] pt-11 text-center align-middle text-[43px]',
               crimson_text.className,
             )}
           >
@@ -54,28 +54,24 @@ export default async function Home({
             <h1>save your high street at the same time</h1>
           </div>
 
-          <div className="flex-1 bg-slate-100">
-            <span>
-              Lorem ipsum dolor sit amet consectetur
-              adipisicing elit. Perspiciatis sunt cumque qui
-              vero excepturi tempora praesentium consequatur
-              velit deleniti maiores fuga, magni quas ab
-              laudantium atque recusandae eveniet, veniam
-              quo?
-            </span>
+          <div className="flex-1 bg-slate-100 pb-[200px]">
+            <div className="-mt-[100px] flex w-full justify-between space-x-4 overflow-x-scroll border border-blue-300">
+              {books.map((item, id) => (
+                <div
+                  key={item.id}
+                  className="h-[320px] w-[300px] flex-shrink-0 border bg-slate-700"
+                >
+                  <h1 className="text-2xl font-bold">
+                    {item.title}
+                  </h1>
+                  <Link href={`/books/${item.id}`}>
+                    Detail
+                  </Link>
+                </div>
+              ))}
+            </div>
           </div>
         </main>
-      </div>
-
-      <div>
-        {books.map((item, id) => (
-          <div key={item.id}>
-            <h1 className="text-2xl font-bold">
-              {item.title}
-            </h1>
-            <Link href={`/books/${item.id}`}>Detail</Link>
-          </div>
-        ))}
       </div>
 
       {searchParams?.login && <Login />}

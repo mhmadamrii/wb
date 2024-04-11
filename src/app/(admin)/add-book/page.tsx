@@ -20,6 +20,7 @@ import { Input } from '~/components/ui/input';
 import { Textarea } from '~/components/ui/textarea';
 import { useUserData } from '~/lib/store';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 const FormSchema = z.object({
   author: z.string().min(2, {
@@ -66,6 +67,7 @@ export default function AddBook() {
 
       if (res) {
         form.reset();
+        toast.success('New Book Successfully Added!');
       }
     } catch (error) {
       console.log(error);
@@ -162,6 +164,7 @@ export default function AddBook() {
       ) : (
         <div>
           <h1>You must join seller mode</h1>
+          <Link href="/">home</Link>
         </div>
       )}
     </>

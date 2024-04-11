@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import { useEffect, useRef } from 'react';
 import { getUserById } from '~/actions/user.action';
 import { useUserData } from '~/lib/store';
+import { Toaster } from 'sonner';
 
 type Props = {
   children?: React.ReactNode;
@@ -21,7 +22,10 @@ const WrapperUserData = ({
 export const NextAuthProvider = ({ children }: Props) => {
   return (
     <SessionProvider>
-      <WrapperUserData>{children}</WrapperUserData>
+      <WrapperUserData>
+        <Toaster richColors position="top-right" />
+        {children}
+      </WrapperUserData>
     </SessionProvider>
   );
 };

@@ -1,6 +1,13 @@
+'use client';
+
 import Link from 'next/link';
 
-import { LogOut, User, MessageCircle } from 'lucide-react';
+import {
+  LogOut,
+  User,
+  MessageCircle,
+  CalendarPlus,
+} from 'lucide-react';
 import { signOut } from 'next-auth/react';
 
 import {
@@ -11,6 +18,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
+import { useRouter } from 'next/navigation';
 
 const ProfileDefault = () => {
   return (
@@ -29,6 +37,7 @@ const ProfileDefault = () => {
 };
 
 export default function UserMenu() {
+  const router = useRouter();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -46,6 +55,13 @@ export default function UserMenu() {
         <DropdownMenuItem className="cursor-pointer">
           <MessageCircle className="mr-2 h-4 w-4" />
           <span>Complain</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className="cursor-pointer"
+          onClick={() => router.push('/add-book')}
+        >
+          <CalendarPlus className="mr-2 h-4 w-4" />
+          <span>Add Book</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
