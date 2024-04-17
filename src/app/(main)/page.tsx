@@ -29,6 +29,7 @@ export default async function Home({
 }) {
   const session = await getServerSession(authOptions);
   const books = await getBooks({});
+  const validateBooks = Array.isArray(books) ? books : [];
   return (
     <>
       <div className="block sm:hidden">
@@ -55,11 +56,11 @@ export default async function Home({
           </div>
 
           <div className="flex-1 bg-slate-100 pb-[200px]">
-            <div className="-mt-[100px] flex w-full justify-between space-x-4 overflow-x-scroll border border-blue-300">
-              {books.map((item, id) => (
+            <div className="-mt-[100px] flex w-full justify-between space-x-4 overflow-x-scroll">
+              {validateBooks.map((item, id) => (
                 <div
                   key={item.id}
-                  className="h-[320px] w-[300px] flex-shrink-0 border bg-slate-700"
+                  className="h-[320px] w-[300px] flex-shrink-0 border bg-slate-100"
                 >
                   <h1 className="text-2xl font-bold">
                     {item.title}

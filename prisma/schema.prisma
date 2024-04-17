@@ -27,7 +27,7 @@ model User {
 }
 
 model Book {
-  id          String             @id 
+  id          String           @unique        @id 
   title       String
   description String
   price       Int

@@ -55,15 +55,25 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     session: async ({ session, token, user }) => {
-      console.log('[SESSION_USER]', session);
-      return {
-        ...session,
-        user: {
-          ...session.user,
-          name: token.name,
-          id: token.id,
-        },
-      };
+      // console.log('[SESSION_USER]', session);
+      // console.log('[TOKEN_USER]', token);
+      // console.log('[USER]', user);
+
+      if (token.sub) {
+        const userInformation = await getUserById({
+          userId: token.id as string,
+        });
+
+        return {
+          ...session,
+          ...userInformation,
+          user: {
+            ...session.user,
+            name: token.name,
+            id: token.id,
+          },
+        };
+      }
     },
     jwt: async ({ token, user }) => {
       // console.log('[TOKEN_USER]', token);

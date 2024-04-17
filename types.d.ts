@@ -5,6 +5,7 @@ declare module 'next-auth' {
     user?: DefaultUser & {
       id: string;
     };
+    isSeller: boolean;
   }
 }
 

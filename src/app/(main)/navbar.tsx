@@ -105,7 +105,6 @@ export function NavbarLoggedIn({ session }) {
       <Link href="/">
         <Icon />
       </Link>
-      <Link href="/add-book">Join seler now</Link>
       <span>Welcome home {session.user.name}</span>
 
       <div className="flex space-x-2">

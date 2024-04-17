@@ -8,7 +8,8 @@ import {
   MessageCircle,
   CalendarPlus,
 } from 'lucide-react';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 import {
   DropdownMenu,
@@ -18,7 +19,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
-import { useRouter } from 'next/navigation';
 
 const ProfileDefault = () => {
   return (
@@ -38,6 +38,7 @@ const ProfileDefault = () => {
 
 export default function UserMenu() {
   const router = useRouter();
+  const { data: user } = useSession();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -56,13 +57,23 @@ export default function UserMenu() {
           <MessageCircle className="mr-2 h-4 w-4" />
           <span>Complain</span>
         </DropdownMenuItem>
-        <DropdownMenuItem
-          className="cursor-pointer"
-          onClick={() => router.push('/add-book')}
-        >
-          <CalendarPlus className="mr-2 h-4 w-4" />
-          <span>Add Book</span>
-        </DropdownMenuItem>
+        {user.isSeller ? (
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => router.push('/add-book')}
+          >
+            <CalendarPlus className="mr-2 h-4 w-4" />
+            <span>Add Book</span>
+          </DropdownMenuItem>
+        ) : (
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => router.push('/add-book')}
+          >
+            <CalendarPlus className="mr-2 h-4 w-4" />
+            <span>Start selling</span>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem
           className="cursor-pointer"

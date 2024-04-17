@@ -18,7 +18,6 @@ import {
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { Textarea } from '~/components/ui/textarea';
-import { useUserData } from '~/lib/store';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
@@ -40,7 +39,6 @@ const FormSchema = z.object({
 export default function AddBook() {
   const router = useRouter();
   const { data: userData } = useSession();
-  const { user } = useUserData();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -76,9 +74,7 @@ export default function AddBook() {
 
   return (
     <>
-      {/* 
-// @ts-ignore */}
-      {user.isSeller ? (
+      {userData?.isSeller ? (
         <div className="flex flex-col justify-center gap-10">
           <div>
             <Link href="/">Home</Link>
